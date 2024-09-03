@@ -1,0 +1,33 @@
+# Thư mục node_modules
+node_modules/
+
+# Các file log
+logs
+*.log
+npm-debug.log*
+
+# Thư mục runtime
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Thư mục với các dependencies được build
+build/
+
+# File môi trường
+.env
+
+# File cấu hình IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# File hệ thống
+.DS_Store
+Thumbs.db
+
+# File tạm thời
+*.tmp
+*.temp
