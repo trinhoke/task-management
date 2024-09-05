@@ -4,6 +4,8 @@ require("./config/database")();
 
 const app = express();
 
+app.use(cors());
+
 const apiV1 = require("./api/v1/routes/index.route");
 
 app.use(express.json());
