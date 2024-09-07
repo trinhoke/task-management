@@ -6,8 +6,12 @@ const sortHelper = require("../helpers/sort");
 module.exports.index = async (req, res) => {
     try {
         let find = {
-             deleted: false 
-        }
+            deleted: false,
+            $or: [
+                { createdBy: req.user._id },
+                { participants: req.user._id }
+            ]
+        };
     // filter status
         if (req.query.status) {
             find.status = req.query.status;
@@ -57,10 +61,15 @@ module.exports.detail = async (req, res) => {
 // [POST] /api/v1/task/create
 module.exports.create = async (req, res) => {
    try {
-     const task = await Task.create(req.body);
+    const objectTask = {
+        ...req.body,
+        createdBy: req.user._id
+    }   
+     const task = await Task.create(objectTask);
      res.status(201).json({
         code: 201,
         message: "Create task successfully",
+        task: task
      });
    } catch (error) {
         res.status(500).json({

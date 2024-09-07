@@ -15,10 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    token: {
-        type: String,
-        default: generate.generateToken(),
-    },
+    token:  String,
     deleted: {
         type: Boolean,
         default: false,

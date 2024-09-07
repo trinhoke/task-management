@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const taskController = require("../../../controllers/task.controller");
+const { authenticate } = require("../../../middleware/authenticate.middleware");
+
+router.use(authenticate);
 
 router.get("/", taskController.index);
 

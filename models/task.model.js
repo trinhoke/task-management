@@ -17,6 +17,9 @@ const taskSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    createdBy: String,
+    parentId: String,
+    participants: [String], 
     },
     { timestamps: true }
 );

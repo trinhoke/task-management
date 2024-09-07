@@ -5,6 +5,8 @@ const userController = require("../../../controllers/user.controller");
 
 const userValidate = require("../../../validates/user.validate");
 
+const {authenticate} = require("../../../middleware/authenticate.middleware");
+
 router.post("/register",
     userValidate.register,
     userController.register
@@ -29,7 +31,13 @@ router.post("/password/otp",
     
 router.post("/password/reset",
     userValidate.resetPassword,
+    authenticate,
     userController.resetPassword
+);
+
+router.get("/profile",
+    authenticate,
+    userController.profile
 );
 
 module.exports = router;

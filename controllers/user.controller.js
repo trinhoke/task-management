@@ -23,15 +23,14 @@ module.exports.register = async (req, res) => {
             });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
+        const token = generateHelper.generateToken();
 
         const newUser = await User.create({
             fullName: fullName,
             email: email,
             password: hashedPassword,
+            token: token,   
         });
-
-        const token = newUser.token;
-        res.cookie("token", token); 
 
         res.json({
             code: 200,
@@ -63,7 +62,12 @@ module.exports.login = async (req, res) => {
             });
         }
 
-        const token = user.token;
+        let token = user.token;
+        if (!token) {
+            token = generateHelper.generateToken();
+            await User.updateOne({ _id: user._id }, { $set: { token: token } });
+        }
+
         res.cookie("token", token); 
 
         res.json({
@@ -169,25 +173,39 @@ module.exports.otp = async (req, res) => {
 module.exports.resetPassword = async (req, res) => {
     try {
         const {password} = req.body;
-        const token = req.cookies.token;
-        const user = await User.findOne({ token: token });
-        if(!user) {
-            return res.status(400).json({
-                code: 400,
-                message: "User not found",
-            });
-        }
+        const user = req.user;
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        const newToken = generateHelper.generateToken(); 
+
         await User.updateOne({ _id: user._id }, {
             $set: { 
                 password: hashedPassword,
+                token: newToken, 
             } 
         });
 
         res.json({
             code: 200,
-            message: "Reset password successfully",
+            message: "Đặt lại mật khẩu thành công",
+            token: newToken, 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            code: 500,
+            message: "Lỗi máy chủ nội bộ",
+            error: error.message 
+        });
+    }    
+}
+
+// [GET] /api/v1/user/profile
+module.exports.profile = async (req, res) => {
+    try {
+        res.json({
+            code: 200,
+            message: "Get profile successfully",
+            data: req.user,
         });
     } catch (error) {
         res.status(500).json({ 
@@ -195,6 +213,5 @@ module.exports.resetPassword = async (req, res) => {
             message: "Internal server error",
             error: error.message 
         });
-    }    
+    }
 }
-
